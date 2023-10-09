@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Крок для завантаження коду з репозиторію GitHub
+                checkout scm
+            }
+        }
+        stage('Build') {
+            steps {
+                // Крок для побудови Docker-імейджа
+                script {
+                    docker.build('my-docker-image:latest')
+                }
+            }
+        }
+        stage('Publish') {
+            steps {
+                // Крок для публікації Docker-імейджа на Docker Hub
+                script {
+                    docker.withRegistry('https://registry.docker.io', 'docker-hub-credentials') {
+                        docker.image('my-docker-image:latest').push()
+                    }
+                }
+            }
+        }
+    }
+}
+
